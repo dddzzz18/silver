@@ -112,6 +112,15 @@ case class Inhale(exp: Exp)(val pos: Position = NoPosition, val info: Info = NoI
     (if(!(exp isSubtype Bool)) Seq(ConsistencyError(s"Assertion to inhale must be of type Bool, but found ${exp.typ}", exp.pos)) else Seq())
 }
 
+/** A havoc statement statement. */
+case class Havoc(exp: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends Stmt {
+  override lazy val check : Seq[ConsistencyError] = {
+    (if(!Consistency.noResult(this)) Seq(ConsistencyError("Result variables are only allowed in postconditions of functions.", pos)) else Seq())
+    // TODO: Do I need a consistency check for the type? Isn't this handled in resolve?
+  }
+}
+
+
 /** An assert statement. */
 case class Assert(exp: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends Stmt {
   override lazy val check : Seq[ConsistencyError] =

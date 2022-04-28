@@ -219,6 +219,7 @@ object CfgGenerator {
            _: FieldAssign |
            _: Inhale |
            _: Exhale |
+           _: Havoc |
            _: Fold |
            _: Unfold |
            _: Package |

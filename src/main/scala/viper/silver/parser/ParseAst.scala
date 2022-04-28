@@ -1056,6 +1056,7 @@ case class PExhale(e: PExp)(val pos: (Position, Position)) extends PStmt
 case class PAssert(e: PExp)(val pos: (Position, Position)) extends PStmt
 case class PAssume(e: PExp)(val pos: (Position, Position)) extends PStmt
 case class PInhale(e: PExp)(val pos: (Position, Position)) extends PStmt
+case class PHavoc(e: PExp)(val pos: (Position, Position)) extends PStmt
 case class PVarAssign(idnuse: PIdnUse, rhs: PExp)(val pos: (Position, Position)) extends PStmt
 case class PFieldAssign(fieldAcc: PFieldAccess, rhs: PExp)(val pos: (Position, Position)) extends PStmt
 case class PMacroAssign(call: PCall, exp: PExp)(val pos: (Position, Position)) extends PStmt
@@ -1295,6 +1296,7 @@ object Nodes {
       case PAssert(exp) => Seq(exp)
       case PInhale(exp) => Seq(exp)
       case PAssume(exp) => Seq(exp)
+      case PHavoc(exp) => Seq(exp)
       case PRegularNewStmt(target, fields) => Seq(target) ++ fields
       case PStarredNewStmt(target) => Seq(target)
       case PMethodCall(targets, method, args) => targets ++ Seq(method) ++ args

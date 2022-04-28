@@ -197,6 +197,26 @@ case class TypeChecker(names: NameAnalyser) {
         check(e, Bool)
       case PAssume(e) =>
         check(e, Bool)
+      case PHavoc(e) =>
+        // The syntax must match one of
+        //  havoc e.f           (field access)
+        //  havoc pred(<args>)  (predicate)
+        //  havoc A --* B       (magic wand)
+        // The `acc` syntax is not allowed, since we don't want to deal with fractional permissions
+        // TODO: Allow implications
+        e match {
+          case PFieldAccess(_,_) =>
+            checkTopTyped(e, None)
+          case pc@PCall(_,_,_) =>
+            check(e, Bool)
+            if (pc.extfunction == null) {
+              messages ++= FastMessaging.message(stmt, "Havoc statement must take a field access, predicate, or wand")
+            }
+          case PMagicWandExp(_, _) =>
+            check(e, Bool)
+          case _ =>
+            messages ++= FastMessaging.message(stmt, "Havoc statement must take a field access, predicate, or wand")
+        }
       case p@PVarAssign(idnuse, PCall(func, args, _)) if names.definition(curMember)(func).isInstanceOf[PMethod] =>
         /* This is a method call that got parsed in a slightly confusing way.
          * TODO: Get rid of this case! There is a matching case in the translator.

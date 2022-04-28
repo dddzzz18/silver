@@ -358,6 +358,18 @@ object errors {
   def InhaleFailed(offendingNode: Inhale): PartialVerificationError =
     PartialVerificationError((reason: ErrorReason) => InhaleFailed(offendingNode, reason))
 
+  case class HavocFailed(offendingNode: Havoc, reason: ErrorReason, override val cached: Boolean = false) extends AbstractVerificationError {
+    val id = "havoc.failed"
+    val text = "Havoc might fail."
+
+    override def pos = offendingNode.exp.pos
+    def withNode(offendingNode: errors.ErrorNode = this.offendingNode) = HavocFailed(offendingNode.asInstanceOf[Havoc], this.reason, this.cached)
+    def withReason(r: ErrorReason) = HavocFailed(offendingNode, r, cached)
+  }
+
+  def HavocFailed(offendingNode: Havoc): PartialVerificationError =
+    PartialVerificationError((reason: ErrorReason) => HavocFailed(offendingNode, reason))
+
   case class IfFailed(offendingNode: Exp, reason: ErrorReason, override val cached: Boolean = false) extends AbstractVerificationError {
     val id = "if.failed"
     val text = "Conditional statement might fail."

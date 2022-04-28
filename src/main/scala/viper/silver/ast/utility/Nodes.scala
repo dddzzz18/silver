@@ -57,6 +57,7 @@ object Nodes {
           case Apply(e) => Seq(e)
           case Inhale(e) => Seq(e)
           case Exhale(e) => Seq(e)
+          case Havoc(e) => Seq(e)
           case Assert(e) => Seq(e)
           case Assume(e) => Seq(e)
           case MethodCall(_, args, targets) => args ++ targets

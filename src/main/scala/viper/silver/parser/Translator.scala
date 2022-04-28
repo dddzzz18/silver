@@ -217,6 +217,8 @@ case class Translator(program: PProgram) {
         Exhale(exp(e))(pos)
       case PAssert(e) =>
         Assert(exp(e))(pos)
+      case PHavoc(e) =>
+        Havoc(exp(e))(pos)
       case PNewStmt(target, fieldsOpt) =>
         val fields = fieldsOpt match {
           case None => program.fields map translate

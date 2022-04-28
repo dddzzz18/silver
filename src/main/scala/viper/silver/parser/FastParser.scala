@@ -746,7 +746,7 @@ object FastParser {
     // specifications
     "requires", "ensures", "invariant",
     // statements
-    "fold", "unfold", "inhale", "exhale", "new", "assert", "assume", "package", "apply",
+    "fold", "unfold", "inhale", "exhale", "havoc", "new", "assert", "assume", "package", "apply",
     // control flow
     "while", "if", "elseif", "else", "goto", "label",
     // sequences
@@ -1073,11 +1073,11 @@ object FastParser {
   }
 
   def stmt(implicit ctx : P[_]) : P[PStmt] = P(ParserExtension.newStmtAtStart(ctx) | macroassign | fieldassign | localassign | fold | unfold | exhale | assertP |
-    inhale | assume | ifthnels | whle | varDecl | defineDecl | newstmt | 
+    inhale | assume | havoc | ifthnels | whle | varDecl | defineDecl | newstmt |
     methodCall | goto | lbl | packageWand | applyWand | macroref | block | ParserExtension.newStmtAtEnd(ctx))
 
   def nodefinestmt(implicit ctx : P[_]) : P[PStmt] = P(ParserExtension.newStmtAtStart(ctx) | fieldassign | localassign | fold | unfold | exhale | assertP |
-    inhale | assume | ifthnels | whle | varDecl | newstmt |
+    inhale | assume | havoc | ifthnels | whle | varDecl | newstmt |
     methodCall | goto | lbl | packageWand | applyWand | macroref | block | ParserExtension.newStmtAtEnd(ctx))
 
   def macroref[_: P]: P[PMacroRef] = FP(idnuse).map { case (pos, a) => PMacroRef(a)(pos) }
@@ -1099,6 +1099,8 @@ object FastParser {
   def inhale[_: P]: P[PInhale] = FP(keyword("inhale") ~/ exp).map{ case (pos, e) => PInhale(e)(pos) }
 
   def assume[_: P]: P[PAssume] = FP(keyword("assume") ~/ exp).map{ case (pos, e) => PAssume(e)(pos) }
+
+  def havoc[_: P]: P[PHavoc] = FP(keyword("havoc") ~/ exp).map{ case (pos, e) => PHavoc(e)(pos) }
 
   def ifthnels[_: P]: P[PIf] = FP("if" ~ "(" ~ exp ~ ")" ~ block ~~~ elsifEls).map {
     case (pos, (cond, thn, ele)) => PIf(cond, thn, ele)(pos)
